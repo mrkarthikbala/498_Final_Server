@@ -2,7 +2,11 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var Llama = require('./models/llama');
+passport = require('passport');
+var morgan = require('morgan');
+var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 var router = express.Router();
 var User = require('./models/user');
 var Errand = require('./models/errand'); 
@@ -25,6 +29,10 @@ var allowCrossDomain = function(req, res, next) {
 };
 app.use(allowCrossDomain);
 
+app.use(morgan('dev'));
+app.use(cookieParser());
+
+
 // Use the body-parser package in our application
 app.use(bodyParser.urlencoded({
   extended: true
@@ -32,6 +40,9 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
+app.use(session({ secret: 'passport demo' }));
+app.use(passport.initialize());
+app.use(passport.session());
 // All our routes will start with /api
 app.use('/api', router);
 
