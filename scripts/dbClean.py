@@ -30,17 +30,17 @@ def getUsers(conn):
 
     return users
 
-def getTasks(conn):
+def getErrands(conn):
     # Retrieve the list of tasks
-    conn.request("GET","""/api/tasks?filter={"_id":1}""")
+    conn.request("GET","""/api/errands?filter={"_id":1}""")
     response = conn.getresponse()
     data = response.read()
     d = json.loads(data)
 
     # Array of user IDs
-    tasks = [str(d['data'][x]['_id']) for x in xrange(len(d['data']))]
+    errands = [str(d['data'][x]['_id']) for x in xrange(len(d['data']))]
 
-    return tasks
+    return errands
 
 def main(argv):
 
@@ -81,23 +81,23 @@ def main(argv):
         users = getUsers(conn)
 
     # Fetch a list of tasks
-    tasks = getTasks(conn)
+    errands = getErrands(conn)
 
     # Loop for as long as the database still returns tasks
-    while len(tasks):
+    while len(errands):
 
         # Delete each individual task
-        for task in tasks:
-            conn.request("DELETE","/api/tasks/"+task)
+        for errand in errands:
+            conn.request("DELETE","/api/errands/"+errand)
             response = conn.getresponse()
             data = response.read()
 
         # Fetch a list of tasks
-        tasks = getTasks(conn)
+        errands = getErrands(conn)
 
     # Exit gracefully
     conn.close()
-    print "All users and tasks removed at "+baseurl+":"+str(port)
+    print "All users and errands removed at "+baseurl+":"+str(port)
 
 
 if __name__ == "__main__":
