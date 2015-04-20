@@ -1,10 +1,10 @@
 var mongoose = require('mongoose');
 
 var bidSchema = new mongoose.Schema({
-  bidAmount: {type: Number},
-  bidderID: {type: String },
-  bidderName: {type: String}  
-});
+  bidAmount: Number,
+  bidderID: String ,
+  bidderName:  String  
+}, { _id : false });
 
 module.exports = mongoose.model('Bid', bidSchema, 'bids');
 

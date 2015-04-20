@@ -2,7 +2,7 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var Llama = require('./models/llama');
-passport = require('passport');
+var passport = require('passport');
 var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -443,6 +443,7 @@ specificErrandsRoute.put(function(req,res) {
 			errand.createdName = req.body.createdName; //set the fields in new errand
 			errand.createdID = req.body.createdID;
 			errand.bids = req.body.bids;
+			console.log(errand.bids);
 			// errand.completed = req.body.completed;
 			
 			// for(var i=0; i<req.body.bids.length; i++){
