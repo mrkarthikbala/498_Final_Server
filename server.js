@@ -260,7 +260,7 @@ usersRoute.options(function(req, res){ res.status(200); res.end();});
 
 //////////////////////////////////////////////////////////ErrandsRoute
 
-var errandsRoute = router.route('/Errands');
+var errandsRoute = router.route('/errands');
 
 
 
