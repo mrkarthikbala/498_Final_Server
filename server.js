@@ -1,11 +1,11 @@
 // Get the packages we need
 var express = require('express');
 var mongoose = require('mongoose');
-var Llama = require('./models/llama');
 var passport = require('passport');
 var passportLocal = require('passport-local')
 var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
+
 var bodyParser = require('body-parser');
 var expressSession = require('express-session');
 var router = express.Router();
@@ -15,6 +15,7 @@ var Errand = require('./models/errand');
 // var beerController = require('./controllers/beer');
 var userController = require('./controllers/user');
 var authController = require('./controllers/auth');
+
 //replace this with your Mongolab URL
 // mongoose.connect('mongodb://localhost/mp3');
 mongoose.connect('mongodb://biderrand:db1234@ds061631.mongolab.com:61631/mp3finalproject');
@@ -94,7 +95,7 @@ usersRoute.options(function(req, res){ res.status(200); res.end();});
 
 //////////////////////////////////////////////////////////ErrandsRoute
 
-var errandsRoute = router.route('/Errands');
+var errandsRoute = router.route('/errands');
 
 
 
@@ -144,6 +145,17 @@ errandsRoute.get(function(req, res) {
 
 });
 
+var parseBid = function(j){
+	console.log(j);
+	var bid = {};
+	bid.bidderID = j.substring(15, j.indexOf(',')-1);
+	bid.bidderName = j.substring(j.indexOf('bidderName')+ 'bidderName'.length + 4, j.indexOf('}')-1);
+	bid.bidAmount = j.substring(j.indexOf('bidAmount') + 'bidAmount'.length +3, j.indexOf('bidAmount') + 'bidAmount'.length +5);
+		//what if less than 10?
+	if (bid.bidAmount.indexOf(',') > -1) bid.bidAmount = bid.bidAmount.charAt(0);
+	console.log(bid.bidAmount);
+	return bid;
+}
 
 ////////////////////////////////////////////////////post
 errandsRoute.post(function(req, res) {
@@ -154,7 +166,20 @@ errandsRoute.post(function(req, res) {
 		errand.deadline = req.body.deadline;
 		errand.createdName = req.body.createdName; //set the fields in new errand
 		errand.createdID = req.body.createdID;
-		// errand.completed = req.body.completed;
+		errand.bids = [];
+		if (req.body.bids){
+			if (req.body.bids[0] != '{'){
+				for (var i = 0; i < req.body.bids.length; i++){
+					var j = JSON.stringify(req.body.bids[i]);
+					var bid = parseBid(j);
+					errand.bids.push(bid);
+				}
+			}
+			else{
+
+				errand.bids.push(parseBid(JSON.stringify(req.body.bids)));
+			}
+		} 
 		
 
 		
@@ -265,15 +290,19 @@ specificErrandsRoute.put(function(req,res) {
 			errand.deadline = req.body.deadline;
 			errand.createdName = req.body.createdName; //set the fields in new errand
 			errand.createdID = req.body.createdID;
-			errand.bids = req.body.bids;
-			console.log(errand.bids);
-			// errand.completed = req.body.completed;
-			
-			// for(var i=0; i<req.body.bids.length; i++){
 
-			// 	errand.bids = new 
-
-			// }
+			if (req.body.bids){
+				if (req.body.bids[0] != '{'){
+					for (var i = 0; i < req.body.bids.length; i++){
+						var j = JSON.stringify(req.body.bids[i]);
+						var bid = parseBid(j);
+						errand.bids.push(bid);
+					}
+				}
+			else{
+				errand.bids.push(parseBid(JSON.stringify(req.body.bids)));
+			}
+		} 
 			
 
 			if(errand.name == null) { //server side validation for name and email
