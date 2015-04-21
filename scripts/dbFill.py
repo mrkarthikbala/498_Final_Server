@@ -34,6 +34,17 @@ def getUsers(conn):
 
     return users
 
+def getBid(userIDs, userNames):
+    if (randint(0, 100) < 70):
+        return False
+    bidder = randint(0, len(userIDs) -1)
+    bidderID = userIDs[bidder]
+    bidderName = userNames[bidder]
+    bidAmount = randint(0, 100)
+
+    bid = {'bidAmount':bidAmount,'bidderID': bidderID, 'bidderName' : bidderName}
+    jsonBid = json.dumps(bid)
+    return bid
 def main(argv):
 
     # Server Base URL and port
@@ -110,11 +121,22 @@ def main(argv):
         createdUser = randint(0,len(userIDs)-1) 
         createdID = userIDs[createdUser]
         createdName = userNames[createdUser]
+        #random bidder
+        bids = []
+        for i in xrange(5):
+            b = getBid(userIDs, userNames)
+            if (b != False):
+                bids.append(b)
+
         deadline = (mktime(date.today().timetuple()) + randint(86400,864000)) * 1000
         description = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English."
-        params = urllib.urlencode({'name': choice(errandNames), 'deadline': deadline, 'createdName': createdName, 'createdID': createdID, 'description': description})
-                #todo bids!!!
 
+        print bids
+        if len(bids)>0:
+            params = urllib.urlencode({'name': choice(errandNames), 'deadline': deadline, 'createdName': createdName, 'createdID': createdID, 'description': description, 'bids' : bids}, True)
+        else:
+            params = urllib.urlencode({'name': choice(errandNames), 'deadline': deadline, 'createdName': createdName, 'createdID': createdID, 'description': description, 'bids' : []}, True)
+        
         # POST the task
         conn.request("POST", "/api/errands", params, headers)
         response = conn.getresponse()
