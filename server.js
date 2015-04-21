@@ -3,13 +3,18 @@ var express = require('express');
 var mongoose = require('mongoose');
 var Llama = require('./models/llama');
 var passport = require('passport');
+var passportLocal = require('passport-local')
 var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('express-session');
+var expressSession = require('express-session');
 var router = express.Router();
 var User = require('./models/user');
 var Errand = require('./models/errand'); 
+
+// var beerController = require('./controllers/beer');
+var userController = require('./controllers/user');
+var authController = require('./controllers/auth');
 //replace this with your Mongolab URL
 // mongoose.connect('mongodb://localhost/mp3');
 mongoose.connect('mongodb://biderrand:db1234@ds061631.mongolab.com:61631/mp3finalproject');
@@ -38,11 +43,20 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
-app.use(session({ secret: 'passport demo' }));
+// app.use(session({ secret: 'passport demo' }));
+// app.use(expressSession({ 
+// 	secret: process.env.SESSION_SECRET || 'secret',
+// 	resave: false,
+// 	saveUninitialized: false
+// }));
+
+
 app.use(passport.initialize());
 app.use(passport.session());
+
+
 // All our routes will start with /api
 app.use('/api', router);
 
@@ -50,7 +64,12 @@ app.use('/api', router);
 var homeRoute = router.route('/');
 
 homeRoute.get(function(req, res) {
-  res.json({ message: 'Hello World!' });
+  // res.json({ message: 'Hello World!' });
+  res.render('index', {
+  	isAuthenticated: false,
+  	user: req.user
+  }); 
+
 });
 
 
@@ -58,212 +77,16 @@ homeRoute.get(function(req, res) {
 
 //////////////////////////////////////////////Users Route
 var usersRoute = router.route('/users');
+usersRoute.get(userController.getUsers);
+usersRoute.post(userController.postUsers);
 
-///////////////////////////////////////////////get 
-usersRoute.get(function(req, res) {
-
-		var where = eval("("+req.query.where+")");; //get all fields
-		var sort = eval("("+req.query.sort+")");
-		var select = eval("("+req.query.select+")");
-		var skip = req.query.skip;
-		var limit = req.query.limit;
-		var count = req.query.count;
-
-
-		if(count == 'true') {
-			var query = User.find(where).limit(limit).skip(skip).select(select);
-			count = query.count();
-			query.exec(function(error, count) {
-				if(error) {
-					res.status(404);
-					res.send({message: "Query Not Found!", data:[]});
-				}
-				else {
-					res.status(200);
-					res.send({message: 'Success!', data:count});
-				}
-			});
-		}else{
-
-			var query = User.find(where).limit(limit).sort(sort).skip(skip).select(select);
-			query.exec(function(error, users) {
-				if(error) {
-					res.status(404);
-					res.send({message: 'Query Not Found!', data:[]});
-				}
-				else {
-					res.status(200);
-					res.send({message:"Success!", data:users});
-				}
-			});
-
-		}
-
-});
-
-///////////////////////////////////////////////////Post
-usersRoute.post(function(req,res) {
-
-		var user = new User(); //create 
-		user.name = req.body.name;
-		user.email = req.body.email;
-		user.password = req.body.password;
-  		// user.userErrands = req.body.userErrands;
-
-  		if(user.name == null) {
-  			res.status(500);
-  			res.send({message: 'Name was not provided, but is required', data:[]});
-  		}
-
-  		else if (user.email == null) {
-  			res.status(500);
-  			res.send({message: 'Email was not provided, but is required', data:[]});
-
-  		}
-
-  		else if (user.password == null) {
-  			res.status(500);
-  			res.send({message: 'Password was not provided, but is required', data:[]});
-
-  		}
-
-  		else {
-			user.save(function(error) {
-				if(error) {
-					if(error.code === 11000) {
-						res.status(500);
-						res.send({message: "Error! There is already an user with the same email! ", data:[]});
-					}
-
-					else {
-						res.status(500);
-						res.send({message: "Unsuccessful! Refer to Docs for help!", data:[]});
-					}
-				}
-
-				else {
-			 		res.status(201);
-			 		res.json({message: "User sucessfully created!", data:user});
-			 	}
-			});
-		}
-});
-
-
-
-
-//////////////////////////////////////////////////////////////specificUserRoute
 
 var specificUsersRoute = router.route('/users/:user_id');
-
-//////////////////////////////////////////////get
-specificUsersRoute.get(function(req, res) {
-
-		User.findById(req.params.user_id, function(error, user) {
-
-			if(error){
-				res.status(404);
-				res.json({message:"User Not Found", data:[]});
-			}
-			if(!user) {
-				res.status(404);
-				res.json({message: "User Not Found", data:[]});
-			}
-
-			else {
-				res.status(200);
-				res.send({message: "Success!", data:user});
-			}
-		});
-});
-
-//////////////////////////////////////////////delete
-specificUsersRoute.delete(function(req, res) {
+specificUsersRoute.get(userController.getSpecificUser);
+specificUsersRoute.delete(userController.deleteUser);
+specificUsersRoute.put(userController.editUser);
 
 
-	User.findById(req.params.user_id, function(error,user){
-
-		if(error){
-			res.status(404);
-			res.json({message:"User Not Found", data:[]});
-		}
-		if(!user) {
-			res.status(404);
-			res.json({message: "User Not Found", data:[]});
-		}
-
-		else {
-			User.remove({_id: req.params.user_id}, 
-			function(error, user) {
-				if(error) {
-					res.status(500);
-					res.send({message: "Server Error", data:[]});
-				}
-				else {
-					res.status(200);
-					res.json({message: 'User was successfully deleted', data:[]});
-				}
-			});
-		}
-	});
-		
-});
-
-//////////////////////////////////////////////put
-specificUsersRoute.put(function(req,res) {
-
-		User.findById(req.params.user_id, function(error, user) {
-				if(error) {
-					res.status(500);
-					res.send({message: "Error. User not updated!", data:[]});
-				}
-				else {
-					user.name = req.body.name;
-					user.email = req.body.email;
-					user.password = req.body.password;
-		  			user.userErrands = req.body.userErrands;
-		  		}
-
-	  			if(user.name == null) {
-  					res.status(500);
-  					res.send({message: 'Name was not provided, but is Required', data:[]});
-  				}
-
-  				else if (user.email == null) {
-  					res.status(500);
-  					res.send({message: 'Email was not provided, but is Required', data:[]});
-  				}
-
-  				else if (user.password == null) {
-  					res.status(500);
-  					res.send({message: 'Password was not provided, but is required', data:[]});
-
-  				}
-
-  				else {
-					user.save(function(error) {
-						if(error) {
-							if(error.code === 11000) {
-								res.status(500);
-								res.send({message: "There is already an user with the same email!", data:[]});
-							}
-
-							else {
-								res.status(500);
-								res.send({message: "Erroror. Please refer to HELP section!", data:[]});
-							}
-						}
-
-						else {
-							res.status(200);
-							res.json({message: 'User sucessfully updated!', data:[]});
-							}
-					});
-				}
-			});
-});
-
-//////////////////////////////////////////////////////////////////Options
 usersRoute.options(function(req, res){ res.status(200); res.end();});
 
 
@@ -491,6 +314,8 @@ specificErrandsRoute.put(function(req,res) {
 		}	
 	});
 });
+
+
 
 // Start the server
 app.listen(port);
