@@ -1,8 +1,11 @@
 // Get the packages we need
 var express = require('express');
 var mongoose = require('mongoose');
+var passport = require('passport');
+var morgan = require('morgan');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
 var User = require('./models/user');
-
 var Errand = require('./models/errand'); 
 var bodyParser = require('body-parser');
 var router = express.Router();
@@ -25,6 +28,10 @@ var allowCrossDomain = function(req, res, next) {
 };
 app.use(allowCrossDomain);
 
+app.use(morgan('dev'));
+app.use(cookieParser());
+
+
 // Use the body-parser package in our application
 app.use(bodyParser.urlencoded({
   extended: true
@@ -32,6 +39,9 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
+app.use(session({ secret: 'passport demo' }));
+app.use(passport.initialize());
+app.use(passport.session());
 // All our routes will start with /api
 app.use('/api', router);
 
@@ -455,16 +465,16 @@ specificErrandsRoute.put(function(req,res) {
 			errand.deadline = req.body.deadline;
 			errand.createdName = req.body.createdName; //set the fields in new errand
 			errand.createdID = req.body.createdID;
-			if (req.body.bids){
-			if (req.body.bids[0] != '{'){
-				for (var i = 0; i < req.body.bids.length; i++){
-					var j = JSON.stringify(req.body.bids[i]);
-					var bid = parseBid(j);
-					errand.bids.push(bid);
-				}
-			}
-			else{
 
+			if (req.body.bids){
+				if (req.body.bids[0] != '{'){
+					for (var i = 0; i < req.body.bids.length; i++){
+						var j = JSON.stringify(req.body.bids[i]);
+						var bid = parseBid(j);
+						errand.bids.push(bid);
+					}
+				}
+			else{
 				errand.bids.push(parseBid(JSON.stringify(req.body.bids)));
 			}
 		} 

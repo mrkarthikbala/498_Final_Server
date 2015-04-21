@@ -53,7 +53,7 @@ def main(argv):
 
     # Number of POSTs that will be made to the server
     userCount = 50
-    taskCount = 200
+    errandCount = 200
 
     try:
         opts, args = getopt.getopt(argv,"hu:p:n:t:",["url=","port=","users=","errands="])
