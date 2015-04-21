@@ -8,6 +8,7 @@ var bidSchema = new mongoose.Schema({
 }, { _id : false });
 
 module.exports = mongoose.model('bid', bidSchema, 'bids');
+
 var ErrandSchema = new mongoose.Schema({
 	name: {type: String, required: true},
 	description: {type: String, required: true},
