@@ -101,10 +101,12 @@ var errandsRoute = router.route('/errands');
 
 ////////////////////////////////////////////////////get
 errandsRoute.get(function(req, res) {
-
-		var where = eval("("+req.query.where+")");; //get all fields
-		var sort = eval("("+req.query.sort+")");
-		var select = eval("("+req.query.select+")");
+		var where = null;
+		if (req.query.where) where = eval("("+req.query.where+")");; //get all fields
+		var sort = null;
+		if (req.query.sort) eval("("+req.query.sort+")");
+		var select = null;
+		if (req.query.select) eval("("+req.query.select+")");
 		var skip = req.query.skip;
 		var limit = req.query.limit;
 		var count = req.query.count;
@@ -225,7 +227,7 @@ errandsRoute.post(function(req, res) {
 
 //////////////////////////////////////////////////////////ErrandsRoute
 
-var specificErrandsRoute = router.route('/Errands/:errand_id');
+var specificErrandsRoute = router.route('/errands/:errand_id');
 
 ///////////////////////////////////////////////////get
 specificErrandsRoute.get(function(req, res) {
