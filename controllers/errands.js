@@ -82,9 +82,12 @@ exports.postErrands = function(req, res) {
 // Create endpoint /api/beers for GET
 exports.getErrands = function(req, res) {
   
-    var where = eval("("+req.query.where+")");; //get all fields
-    var sort = eval("("+req.query.sort+")");
-    var select = eval("("+req.query.select+")");
+    var where = null;
+    if (req.query.where) where = eval("("+req.query.where+")");; //get all fields
+    var sort = null;
+    if (req.query.sort) eval("("+req.query.sort+")");
+    var select = null;
+    if (req.query.select) eval("("+req.query.select+")");
     var skip = req.query.skip;
     var limit = req.query.limit;
     var count = req.query.count;
