@@ -17,12 +17,31 @@ var userController = require('./controllers/user');
 var errandController = require('./controllers/errands');
 var authController = require('./controllers/auth');
 
+
+
 //replace this with your Mongolab URL
 // mongoose.connect('mongodb://localhost/mp3');
 mongoose.connect('mongodb://biderrand:db1234@ds061631.mongolab.com:61631/mp3finalproject');
 
 // Create our Express application
-var app = express();
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+app.get('/', function(req, res){
+  res.sendfile("testingPassport" + '/index.html');
+});
+
+io.on('connection', function(socket){
+	console.log("hello");
+  // socket.on('chat message', function(msg){
+  //   io.emit('chat message', msg);
+  // });
+});
+
+
+// server.listen(4000);
+
 
 // Use environment defined port or 4000
 var port = process.env.PORT || 4000;
@@ -44,6 +63,8 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
+
 
 // app.use(bodyParser.json());
 
@@ -69,6 +90,9 @@ var homeRoute = router.route('/');
 
 
 //Add more routes here
+// app.get('/', function(req, res){
+//   res.sendFile('http://localhost:4000/testingPassport/index.html');
+// });
 
 //////////////////////////////////////////////Users Route
 var usersRoute = router.route('/users');
@@ -94,8 +118,6 @@ errandsRoute.get(errandController.getErrands);
 errandsRoute.post(errandController.postErrands);
 
 
-
-
 var specificErrandsRoute = router.route('/Errands/:errand_id');
 specificErrandsRoute.get(errandController.getSpecificErrand);
 specificErrandsRoute.delete(errandController.deleteErrand);
@@ -106,6 +128,8 @@ errandsRoute.options(function(req, res){ res.status(200); res.end();});
 
 
 
-// Start the server
-app.listen(port);
-console.log('Server running on port ' + port); 
+// // Start the server
+http.listen(4000, function(){
+  console.log('listening on 4000');
+});
+// console.log('Server running on port ' + port); 
