@@ -101,7 +101,7 @@ usersRoute.post(userController.postUsers);
 
 
 var specificUsersRoute = router.route('/users/:user_id');
-specificUsersRoute.get(authController.isAuthenticated, userController.getSpecificUser);
+specificUsersRoute.get(userController.getSpecificUser);
 specificUsersRoute.delete(userController.deleteUser);
 specificUsersRoute.put(userController.editUser);
 
