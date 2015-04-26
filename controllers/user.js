@@ -1,6 +1,40 @@
 var User = require('../models/user');
+var bcrypt = require('bcrypt-nodejs');
 
 // Create endpoint /api/users for POST
+
+exports.login = function(req, res) {
+  
+   User.findOne( { email: req.body.email } , function(error, user) {
+      console.log(user.password);
+      if(error){
+        res.status(404);
+        res.json({message:"User Not Found", data:[]});
+      }
+      if(!user) {
+        res.status(404);
+        res.json({message: "User Not Found", data:[]});
+      }
+
+      else {
+        bcrypt.compare( req.body.password, user.password,function(err, isMatch){
+            if(err){
+              res.status(500);
+              res.send({message: "Error", data:{}});
+            }else if(isMatch){
+                res.status(200);
+                res.send({message: "Success!", data:user});
+            }else{
+                res.status(401);
+                res.send({message: "Password does not match!", data:{}});
+            }
+
+        });
+      }
+        
+        
+    });
+};
 exports.postUsers = function(req, res) {
     var user = new User();
     console.log(req.body);

@@ -93,7 +93,8 @@ var homeRoute = router.route('/');
 // app.get('/', function(req, res){
 //   res.sendFile('http://localhost:4000/testingPassport/index.html');
 // });
-
+var loginRoute = router.route('/login');
+loginRoute.post(userController.login);
 //////////////////////////////////////////////Users Route
 var usersRoute = router.route('/users');
 usersRoute.get(userController.getUsers);
