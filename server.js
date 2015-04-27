@@ -33,10 +33,8 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket){
-	console.log("hello");
-  // socket.on('chat message', function(msg){
-  //   io.emit('chat message', msg);
-  // });
+	console.log("New user connected");
+  	
 });
 
 
@@ -66,18 +64,18 @@ app.use(bodyParser.urlencoded({
 
 
 
-// app.use(bodyParser.json());
+ app.use(bodyParser.json());
 
 // app.use(session({ secret: 'passport demo' }));
-// app.use(expressSession({ 
-// 	secret: process.env.SESSION_SECRET || 'secret',
-// 	resave: false,
-// 	saveUninitialized: false
-// }));
+ app.use(expressSession({ 
+	 secret: process.env.SESSION_SECRET || 'secret',
+	 resave: false,
+  	 saveUninitialized: false
+ }));
 
 
 app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.session());
 
 
 // All our routes will start with /api
@@ -91,8 +89,8 @@ var homeRoute = router.route('/');
 
 //Add more routes here
 // app.get('/', function(req, res){
-//   res.sendFile('http://localhost:4000/testingPassport/index.html');
-// });
+  // res.sendFile('http://localhost:4000/testingPassport/index.html');
+ //});
 
 //////////////////////////////////////////////Users Route
 var usersRoute = router.route('/users');
@@ -115,10 +113,14 @@ usersRoute.options(function(req, res){ res.status(200); res.end();});
 
 var errandsRoute = router.route('/errands');
 errandsRoute.get(errandController.getErrands);
-errandsRoute.post(errandController.postErrands);
+errandsRoute.post(function(req,res){
+	errandController.postErrands(req, res);
+	io.emit("New Bid.");
+});
 
 
-var specificErrandsRoute = router.route('/Errands/:errand_id');
+
+var specificErrandsRoute = router.route('/errands/:errand_id');
 specificErrandsRoute.get(errandController.getSpecificErrand);
 specificErrandsRoute.delete(errandController.deleteErrand);
 specificErrandsRoute.put(errandController.editErrand);
