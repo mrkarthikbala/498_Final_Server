@@ -15,6 +15,7 @@ var ErrandSchema = new mongoose.Schema({
 	deadline: {type: Date, required: true},
 	createdID:  {type: String, required: true},			
 	createdName: {type: String, required: true}, 
+	errandLocation: {type: String, required: true},
 	bids : {  type: [bidSchema] }
 });
 

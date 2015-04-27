@@ -23,6 +23,7 @@ exports.postErrands = function(req, res) {
     errand.deadline = req.body.deadline;
     errand.createdName = req.body.createdName; //set the fields in new errand
     errand.createdID = req.body.createdID;
+    errand.errandLocation = req.body.errandLocation;
     errand.bids = [];
     if (req.body.bids){
       if (req.body.bids[0] != '{'){
@@ -69,6 +70,10 @@ exports.postErrands = function(req, res) {
       else if(errand.createdID == null) {
           res.status(500);
         res.send({message: 'Creator id is required, but was not provided!', data:[]});
+      }
+      else if (errand.errandLocation == null){
+        res.status(500);
+        res.send({message: 'errand location is required, but was not provided!', data : []});
       }
       
       else { //Query Mongoose and return appropriately
@@ -173,6 +178,7 @@ Errand.findById(req.params.errand_id, function(error, task) { // query and then 
       errand.deadline = req.body.deadline;
       errand.createdName = req.body.createdName; //set the fields in new errand
       errand.createdID = req.body.createdID;
+      errand.errandLocation = req.body.errandLocation;
 
       if (req.body.bids){
         if (req.body.bids[0] != '{'){
@@ -207,6 +213,10 @@ Errand.findById(req.params.errand_id, function(error, task) { // query and then 
         else if(errand.createdID == null) {
             res.status(500);
           res.send({message: 'Creator id is required, but was not provided!', data:[]});
+        }
+        else if (errand.errandLocation == null){
+          res.status(500);
+          res.send({message: 'errand location is required, but was not provided!', data: []});
         }
       
 

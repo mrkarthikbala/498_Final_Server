@@ -112,7 +112,7 @@ def main(argv):
     # Open 'tasks.txt' for sample task names
     f = open('errands.txt','r')
     errandNames = f.read().splitlines()
-
+    locations = ["Chicago", "Boston", "Hawaii", "Paris", "Stutgart", "London", "Tokyo", "Chennai", "Madrid", "Shanghai", "Mt. Kilimanjaro", "The South Pole", "Singapore", "Lebanon"]
     # Loop 'taskCount' number of times
     for i in xrange(errandCount):
 
@@ -121,6 +121,8 @@ def main(argv):
         createdUser = randint(0,len(userIDs)-1) 
         createdID = userIDs[createdUser]
         createdName = userNames[createdUser]
+        location = locations[randint(0, len(locations)-1)]
+
         #random bidder
         bids = []
         for i in xrange(5):
@@ -133,9 +135,9 @@ def main(argv):
 
         print bids
         if len(bids)>0:
-            params = urllib.urlencode({'name': choice(errandNames), 'deadline': deadline, 'createdName': createdName, 'createdID': createdID, 'description': description, 'bids' : bids}, True)
+            params = urllib.urlencode({'name': choice(errandNames), 'deadline': deadline, 'createdName': createdName, 'createdID': createdID, 'description': description, 'bids' : bids, 'errandLocation': location}, True)
         else:
-            params = urllib.urlencode({'name': choice(errandNames), 'deadline': deadline, 'createdName': createdName, 'createdID': createdID, 'description': description, 'bids' : []}, True)
+            params = urllib.urlencode({'name': choice(errandNames), 'deadline': deadline, 'createdName': createdName, 'createdID': createdID, 'description': description, 'bids' : [], 'errandLocation' : location}, True)
         
         # POST the task
         conn.request("POST", "/api/errands", params, headers)
