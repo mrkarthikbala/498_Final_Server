@@ -91,6 +91,7 @@ exports.postErrands = function(req, res) {
         });
 
     }
+    return errand;
 };
 
 // Create endpoint /api/beers for GET

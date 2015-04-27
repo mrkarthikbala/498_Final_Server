@@ -115,8 +115,9 @@ usersRoute.options(function(req, res){ res.status(200); res.end();});
 var errandsRoute = router.route('/errands');
 errandsRoute.get(errandController.getErrands);
 errandsRoute.post(function(req,res){
-	errandController.postErrands(req, res);
-	io.emit("New Bid.");
+	var errand = errandController.postErrands(req, res);
+	if (errand != null) io.emit("New Bid", {data:errand});
+	//todo what if errand is bad??!
 });
 
 
@@ -124,8 +125,12 @@ errandsRoute.post(function(req,res){
 var specificErrandsRoute = router.route('/errands/:errand_id');
 specificErrandsRoute.get(errandController.getSpecificErrand);
 specificErrandsRoute.delete(errandController.deleteErrand);
-specificErrandsRoute.put(errandController.editErrand);
 
+specificErrandsRoute.put(function(req,res){
+	var errand =errandController.editErrand(req, res);
+	if (errand != null) io.emit("New Bid", {data: errand});
+
+});
 
 errandsRoute.options(function(req, res){ res.status(200); res.end();});
 
