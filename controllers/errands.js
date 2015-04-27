@@ -36,6 +36,15 @@ exports.postErrands = function(req, res) {
 
         errand.bids.push(parseBid(JSON.stringify(req.body.bids)));
       }
+    }else{
+        if(req.body.setPrice){
+          var bid = {};
+          bid.bidderID =  errand.createdID;
+          bid.bidderName = errand.createdName;
+          bid.bidAmount = req.body.setPrice;
+          errand.bids.push(bid);
+        }
+
     } 
     
 

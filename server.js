@@ -62,10 +62,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-
-
- app.use(bodyParser.json());
-
+app.use(bodyParser.json());
 // app.use(session({ secret: 'passport demo' }));
  app.use(expressSession({ 
 	 secret: process.env.SESSION_SECRET || 'secret',
@@ -92,6 +89,10 @@ var homeRoute = router.route('/');
   // res.sendFile('http://localhost:4000/testingPassport/index.html');
  //});
 
+//   res.sendFile('http://localhost:4000/testingPassport/index.html');
+// });
+var loginRoute = router.route('/login');
+loginRoute.post(userController.login);
 //////////////////////////////////////////////Users Route
 var usersRoute = router.route('/users');
 usersRoute.get(userController.getUsers);
@@ -99,7 +100,7 @@ usersRoute.post(userController.postUsers);
 
 
 var specificUsersRoute = router.route('/users/:user_id');
-specificUsersRoute.get(authController.isAuthenticated, userController.getSpecificUser);
+specificUsersRoute.get(userController.getSpecificUser);
 specificUsersRoute.delete(userController.deleteUser);
 specificUsersRoute.put(userController.editUser);
 
