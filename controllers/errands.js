@@ -166,35 +166,40 @@ exports.getSpecificErrand = function(req, res) {
 // Create endpoint /api/beers/:beer_id for PUT
 exports.editErrand = function(req, res) {
   // Use the Beer model to find a specific beer
-Errand.findById(req.params.errand_id, function(error, task) { // query and then check for errors
+Errand.findById(req.params.errand_id, function(error, errand) { // query and then check for errors
     if(error) {
       res.status(500); //not enough info for useful message as can't be not sound as got task
       res.send({message: "Error. Could not Update!", data:[]});
     }
 
     else {
-      var errand = new Errand(); //create new task
+      // var errand = new Errand(); //create new task
+      // errand._id = req.params.errand_id;
       errand.name = req.body.name;
       errand.description = req.body.description;
       errand.deadline = req.body.deadline;
       errand.createdName = req.body.createdName; //set the fields in new errand
       errand.createdID = req.body.createdID;
       errand.errandLocation = req.body.errandLocation;
-
+     
       if (req.body.bids){
-        if (req.body.bids[0] != '{'){
-          for (var i = 0; i < req.body.bids.length; i++){
-            var j = JSON.stringify(req.body.bids[i]);
-            var bid = parseBid(j);
-            errand.bids.push(bid);
-          }
-        }
-      else{
-        errand.bids.push(parseBid(JSON.stringify(req.body.bids)));
+        errand.bids = req.body.bids;
       }
-    } 
+      // if (req.body.bids){
+      //   console.log(req.body.bids);
+      //   if (req.body.bids[0] != '{'){
+      //     for (var i = 0; i < req.body.bids.length; i++){
+      //       var j = JSON.stringify(req.body.bids[i]);
+      //       var bid = parseBid(j);
+      //       errand.bids.push(bid);
+      //     }
+      //   }
+      // else{
+      //   errand.bids.push(parseBid(JSON.stringify(req.body.bids)));
+      // }
+    
       
-
+      console.log("putting");
       if(errand.name == null) { //server side validation for name and email
         res.status(500);
           res.send({message: 'errand name is required, but was not provided', data:[]});
