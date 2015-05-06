@@ -116,7 +116,7 @@ var errandsRoute = router.route('/errands');
 errandsRoute.get(errandController.getErrands);
 errandsRoute.post(function(req,res){
 	var errand = errandController.postErrands(req, res);
-	if (errand != null) io.emit("New Bid", {data:errand});
+	io.emit("New Bid", {data:errand});
 	//todo what if errand is bad??!
 });
 
@@ -128,7 +128,8 @@ specificErrandsRoute.delete(errandController.deleteErrand);
 
 specificErrandsRoute.put(function(req,res){
 	var errand =errandController.editErrand(req, res);
-	if (errand != null) io.emit("New Bid", {data: errand});
+	io.emit("New Bid", {data: errand});
+	console.log("new bid");
 
 });
 
