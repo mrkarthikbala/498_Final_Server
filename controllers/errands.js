@@ -236,6 +236,7 @@ Errand.findById(req.params.errand_id, function(error, errand) { // query and the
           else {
             res.status(200);
             res.json({message: 'Task sucessfully updated!', data:errand});
+            return errand;
           }
         });
       }

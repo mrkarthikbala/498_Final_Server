@@ -116,7 +116,6 @@ var errandsRoute = router.route('/errands');
 errandsRoute.get(errandController.getErrands);
 errandsRoute.post(function(req,res){
 	var errand = errandController.postErrands(req, res);
-	io.emit("New Bid", {data:errand});
 	//todo what if errand is bad??!
 });
 

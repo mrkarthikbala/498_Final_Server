@@ -6,6 +6,7 @@ var bcrypt = require('bcrypt-nodejs');
 exports.login = function(req, res) {
   
    User.findOne( { email: req.body.email } , function(error, user) {
+      if (user.password === null) return;
       console.log(user.password);
       if(error){
         res.status(404);
