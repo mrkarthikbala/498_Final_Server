@@ -6,15 +6,16 @@ var bcrypt = require('bcrypt-nodejs');
 exports.login = function(req, res) {
   
    User.findOne( { email: req.body.email } , function(error, user) {
-      if (user.password === null) return;
-      console.log(user.password);
+      // if (user.password === null) return;
+      // console.log(user.password);
       if(error){
         res.status(404);
-        res.json({message:"User Not Found", data:[]});
+        res.json({message:"User Not Found. Please Sign Up!", data:[]});
       }
+      console.log(user)
       if(!user) {
         res.status(404);
-        res.json({message: "User Not Found", data:[]});
+        res.json({message: "User Not Found. Please Sign Up!", data:[]});
       }
 
       else {
@@ -67,7 +68,7 @@ exports.postUsers = function(req, res) {
           if(error) {
             if(error.code === 11000) {
               res.status(500);
-              res.send({message: "Error! There is already an user with the same email! ", data:[]});
+              res.send({message: "There is already an user with the same email! Please use a different email.", data:[]});
             }
 
             else {
