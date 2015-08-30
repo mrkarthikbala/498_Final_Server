@@ -25,17 +25,17 @@ mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://biderrand:db1234@ds06163
 
 // Create our Express application
 var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+// var http = require('http').Server(app);
+// var io = require('socket.io')(http);
 
 // app.get('/', function(req, res){
 //   res.sendfile("testingPassport" + '/index.html');
 // });
 
-io.on('connection', function(socket){
-	console.log("New user connected");
+// io.on('connection', function(socket){
+// 	console.log("New user connected");
   	
-});
+// });
 
 
 // server.listen(4000);
